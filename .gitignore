@@ -1,0 +1,34 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+streamlit.log
+uvicorn.log
+
+# Data and models
+models/
+vectorstore/
+data/processed/
+data/raw/
+
+# OS
+.DS_Store
+Thumbs.db
+
