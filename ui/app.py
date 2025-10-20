@@ -10,19 +10,25 @@ import streamlit as st
 
 
 def _resolve_project_root() -> Path:
-    possible_roots = list(Path(__file__).resolve().parents)
-    for candidate in possible_roots:
-        if (candidate / "src").exists():
-            return candidate
-    cwd = Path.cwd()
-    if (cwd / "src").exists():
-        return cwd
-    return Path(__file__).resolve().parents[1]
+    try:
+        possible_roots = list(Path(__file__).resolve().parents)
+        for candidate in possible_roots:
+            if (candidate / "src").exists():
+                return candidate
+        cwd = Path.cwd()
+        if (cwd / "src").exists():
+            return cwd
+        return Path(__file__).resolve().parents[1]
+    except Exception:
+        return Path.cwd()
 
 
-ROOT = _resolve_project_root()
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+try:
+    ROOT = _resolve_project_root()
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+except Exception:
+    ROOT = Path.cwd()
 
 from src.config import RAW_DIR, ensure_directories
 from src.data_processing import process_pdf
