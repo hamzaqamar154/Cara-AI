@@ -30,8 +30,16 @@ from src.llm import LLMService
 from src.retriever import VectorStore
 
 ensure_directories()
-vector_store = VectorStore()
-llm = LLMService()
+
+
+@st.cache_resource
+def get_vector_store():
+    return VectorStore()
+
+
+@st.cache_resource
+def get_llm():
+    return LLMService()
 
 STYLES = """
 <style>
@@ -150,11 +158,13 @@ with st.sidebar:
             temp_path = RAW_DIR / uploaded.name
             temp_path.write_bytes(uploaded.getvalue())
             chunks = process_pdf(temp_path)
+            vector_store = get_vector_store()
             vector_store.add_documents(chunks)
             st.success(f"Embedded {len(chunks)} chunks from {uploaded.name}")
     
     st.markdown("---")
     st.markdown("### Stored Data")
+    vector_store = get_vector_store()
     total_chunks = len(vector_store.metadata)
     if total_chunks > 0:
         st.info(f"{total_chunks} document chunks stored")
@@ -179,6 +189,8 @@ query = st.text_input(
     label_visibility="collapsed"
 )
 
+vector_store = get_vector_store()
+llm = get_llm()
 auto_k = determine_top_k(vector_store)
 
 if st.button("Get Answer", type="primary", use_container_width=True) and query:
