@@ -29,11 +29,10 @@ from src.data_processing import process_pdf
 from src.llm import LLMService
 from src.retriever import VectorStore
 
-ensure_directories()
-
 
 @st.cache_resource
 def get_vector_store():
+    ensure_directories()
     return VectorStore()
 
 
