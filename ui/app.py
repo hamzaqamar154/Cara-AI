@@ -10,41 +10,28 @@ import streamlit as st
 
 
 def _resolve_project_root() -> Path:
-    try:
-        possible_roots = list(Path(__file__).resolve().parents)
-        for candidate in possible_roots:
-            if (candidate / "src").exists():
-                return candidate
-        cwd = Path.cwd()
-        if (cwd / "src").exists():
-            return cwd
-        return Path(__file__).resolve().parents[1]
-    except Exception:
-        return Path.cwd()
+    possible_roots = list(Path(__file__).resolve().parents)
+    for candidate in possible_roots:
+        if (candidate / "src").exists():
+            return candidate
+    cwd = Path.cwd()
+    if (cwd / "src").exists():
+        return cwd
+    return Path(__file__).resolve().parents[1]
 
 
-try:
-    ROOT = _resolve_project_root()
-    if str(ROOT) not in sys.path:
-        sys.path.insert(0, str(ROOT))
-except Exception:
-    ROOT = Path.cwd()
+ROOT = _resolve_project_root()
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from src.config import RAW_DIR, ensure_directories
 from src.data_processing import process_pdf
 from src.llm import LLMService
 from src.retriever import VectorStore
 
-
-@st.cache_resource
-def get_vector_store():
-    ensure_directories()
-    return VectorStore()
-
-
-@st.cache_resource
-def get_llm():
-    return LLMService()
+ensure_directories()
+vector_store = VectorStore()
+llm = LLMService()
 
 STYLES = """
 <style>
@@ -163,13 +150,11 @@ with st.sidebar:
             temp_path = RAW_DIR / uploaded.name
             temp_path.write_bytes(uploaded.getvalue())
             chunks = process_pdf(temp_path)
-            vector_store = get_vector_store()
             vector_store.add_documents(chunks)
             st.success(f"Embedded {len(chunks)} chunks from {uploaded.name}")
     
     st.markdown("---")
     st.markdown("### Stored Data")
-    vector_store = get_vector_store()
     total_chunks = len(vector_store.metadata)
     if total_chunks > 0:
         st.info(f"{total_chunks} document chunks stored")
@@ -194,8 +179,6 @@ query = st.text_input(
     label_visibility="collapsed"
 )
 
-vector_store = get_vector_store()
-llm = get_llm()
 auto_k = determine_top_k(vector_store)
 
 if st.button("Get Answer", type="primary", use_container_width=True) and query:

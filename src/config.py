@@ -40,18 +40,7 @@ class Settings:
         )
 
 
-try:
-    settings = Settings.load()
-except Exception:
-    settings = Settings(
-        groq_api_key=None,
-        llm_model="llama-3.1-8b-instant",
-        chunk_size=800,
-        chunk_overlap=200,
-        vectorstore_path=VECTORSTORE_DIR / "faiss.index",
-        metadata_store_path=VECTORSTORE_DIR / "metadata.pkl",
-        api_base_url="https://api.groq.com/openai/v1",
-    )
+settings = Settings.load()
 
 
 def ensure_directories() -> None:

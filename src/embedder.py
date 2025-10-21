@@ -20,9 +20,7 @@ class EmbeddingService:
         self.model = None
         if SentenceTransformer is not None:
             try:
-                import os
-                os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
-                self.model = SentenceTransformer("all-MiniLM-L6-v2", device="cpu")
+                self.model = SentenceTransformer("all-MiniLM-L6-v2")
                 logger.info("Loaded local embedding model: all-MiniLM-L6-v2")
             except Exception as e:
                 logger.warning(f"Failed to load embedding model: {e}")

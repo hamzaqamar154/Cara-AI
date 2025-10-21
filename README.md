@@ -50,22 +50,6 @@ python -m src.main --query "What is this about?"
 
 Note: The UI is intentionally minimal. Focus is on the RAG logic and functionality rather than design polish.
 
-## Deployment
-
-Deploy on Streamlit Cloud:
-1. Push your code to GitHub
-2. Sign in to https://share.streamlit.io
-3. Connect your repository
-4. Set main file: `ui/app.py`
-5. Add secrets in Streamlit Cloud settings:
-   - `GROQ_API_KEY` - Your Groq API key
-   - `API_BASE_URL` - https://api.groq.com/openai/v1
-   - `LLM_MODEL` - llama-3.1-8b-instant (optional)
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed instructions.
-
-**Note:** The `.env` file is not pushed to GitHub (it's in `.gitignore`). For Streamlit Cloud, add your environment variables as secrets in the dashboard.
-
 ## How it works
 
 1. PDFs are uploaded and text is extracted
