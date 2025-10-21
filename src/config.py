@@ -9,11 +9,30 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
+try:
+    import streamlit as st
+    _STREAMLIT_AVAILABLE = True
+except ImportError:
+    _STREAMLIT_AVAILABLE = False
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 VECTORSTORE_DIR = PROJECT_ROOT / "vectorstore"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
+
+
+def _get_secret(key: str, default: Optional[str] = None) -> Optional[str]:
+    """Get value from Streamlit secrets or environment variables."""
+    if _STREAMLIT_AVAILABLE:
+        try:
+            if hasattr(st, "secrets") and key in st.secrets:
+                return st.secrets[key]
+        except Exception:
+            pass
+    
+    load_dotenv()
+    return os.getenv(key, default)
 
 
 @dataclass(frozen=True)
@@ -28,15 +47,14 @@ class Settings:
 
     @classmethod
     def load(cls) -> "Settings":
-        load_dotenv()
         return cls(
-            groq_api_key=os.getenv("GROQ_API_KEY"),
-            llm_model=os.getenv("LLM_MODEL", "llama-3.1-8b-instant"),
-            chunk_size=int(os.getenv("CHUNK_SIZE", "800")),
-            chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "200")),
+            groq_api_key=_get_secret("GROQ_API_KEY"),
+            llm_model=_get_secret("LLM_MODEL", "llama-3.1-8b-instant"),
+            chunk_size=int(_get_secret("CHUNK_SIZE", "800") or "800"),
+            chunk_overlap=int(_get_secret("CHUNK_OVERLAP", "200") or "200"),
             vectorstore_path=VECTORSTORE_DIR / "faiss.index",
             metadata_store_path=VECTORSTORE_DIR / "metadata.pkl",
-            api_base_url=os.getenv("API_BASE_URL", "https://api.groq.com/openai/v1"),
+            api_base_url=_get_secret("API_BASE_URL", "https://api.groq.com/openai/v1"),
         )
 
 

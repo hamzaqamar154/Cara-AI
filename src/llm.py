@@ -30,7 +30,7 @@ class LLMService:
                 self.client = None
         else:
             if not settings.groq_api_key:
-                logger.warning("GROQ_API_KEY not set. Please configure it in .env file.")
+                logger.warning("GROQ_API_KEY not set. Configure it in .env file or Streamlit secrets.")
             if OpenAI is None:
                 logger.warning("openai package not installed. Install it with: pip install openai")
 
@@ -95,7 +95,7 @@ class LLMService:
                         return "Request too large. Try a more specific question or wait a moment."
                     return "Rate limit exceeded. Wait a few seconds and try again."
                 elif '401' in error_str or 'unauthorized' in error_str:
-                    return "Authentication failed. Check your GROQ_API_KEY in .env"
+                    return "Authentication failed. Check your GROQ_API_KEY in .env or Streamlit secrets"
                 else:
                     return f"API error: {str(e)}"
 

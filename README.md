@@ -84,6 +84,19 @@ Groq free tier has a 6000 tokens/minute limit. The system automatically:
 
 API docs at `http://127.0.0.1:8000/docs`
 
+## Deployment
+
+For Streamlit Cloud deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+Quick steps:
+1. Push code to GitHub
+2. Connect repository to Streamlit Cloud
+3. Set main file path: `ui/app.py`
+4. Add secrets in Streamlit Cloud settings:
+   - `GROQ_API_KEY`
+   - `LLM_MODEL` (optional, defaults to llama-3.1-8b-instant)
+   - `API_BASE_URL` (optional, defaults to https://api.groq.com/openai/v1)
+
 ---
 
 Author: Mirza Noor Hamza
